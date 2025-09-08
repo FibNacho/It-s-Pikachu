@@ -9,7 +9,7 @@ export const apiSlice = createApi({
   endpoints: (builder) => {
     return {
       getPokemon: builder.query({
-        query: () => 'pokemon',
+        query: (name) => `pokemon/${name}`,
       }),
     };
   },
