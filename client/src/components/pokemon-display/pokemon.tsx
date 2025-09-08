@@ -33,11 +33,9 @@ export default function Pokemon() {
     imgDisplay = <p>Loading</p>;
   } else if (isError) {
     imgDisplay = <p>{JSON.stringify(error)}</p>;
-  } else if (data?.species?.name) {
+  } else if (data?.species?.name && userSearch?.toLowerCase() !== data?.species?.name) {
     imgDisplay = <p>{data?.species?.name}</p>;
-  }
-
-  if (userSearch?.toLowerCase === data?.species?.name) {
+  } else if (userSearch?.toLowerCase() === data?.species?.name) {
     imgDisplay = <p>You got it</p>;
   }
 
