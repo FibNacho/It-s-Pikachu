@@ -1,3 +1,44 @@
+.componentContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100vw;
+  margin: 0;
+}
+
+.pokemonSearch {
+  justify-self: center;
+  display: flex;
+  flex-wrap: nowrap;
+}
+.submitButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.optionsContainer {
+  display: flex;
+  justify-content: center;
+  padding: 1rem;
+  margin-top: 2rem;
+}
+
+.defaultImgClass {
+  filter: none;
+}
+
+.imgCover {
+  filter: brightness(0);
+}
+
+.defaultImgClass,
+.imgCover {
+  display: flex;
+  justify-self: center;
+}
+
 .greenBK {
   background-color: rgb(91, 147, 91);
 }
@@ -5,5 +46,14 @@
   background-color: rgb(167, 85, 85);
 }
 .normalBK {
-  background-color: #242424;
+  background-color: #5594a3;
+}
+
+.greenBK,
+.redBK,
+.normalBK {
+  width: 20rem;
+  height: 20rem;
+  border: 2px solid white;
+  border-radius: 1rem;
 }
