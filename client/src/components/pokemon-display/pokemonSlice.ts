@@ -10,7 +10,7 @@ export interface initialGameState {
 }
 
 const initialState: initialGameState = {
-  turnCount: 0,
+  turnCount: 1,
   correctAnswers: 0,
   wrongAnswers: 0,
 };
