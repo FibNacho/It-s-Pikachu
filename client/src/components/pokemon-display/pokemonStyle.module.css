@@ -20,9 +20,9 @@
 
 .optionsContainer {
   display: flex;
-  justify-content: center;
-  padding: 1rem;
-  margin-top: 2rem;
+  justify-content: space-around;
+  padding: 0 1.2rem;
+  margin-top: 1rem;
 }
 
 .defaultImgClass {
@@ -32,11 +32,19 @@
 .imgCover {
   filter: brightness(0);
 }
+.imgContainer {
+  display: flex;
+  height: 7rem;
+  width: 7rem;
+  justify-self: center;
+  object-fit: contain;
+}
 
 .defaultImgClass,
 .imgCover {
   display: flex;
   justify-self: center;
+  object-fit: contain;
 }
 
 .greenBK {
@@ -53,7 +61,7 @@
 .redBK,
 .normalBK {
   width: 20rem;
-  height: 20rem;
+  height: 15rem;
   border: 2px solid white;
   border-radius: 1rem;
 }

@@ -9,37 +9,22 @@ import {
 } from './pokemonSlice';
 import { useAppDispatch, useAppSelector } from '../../app/hooks/redux-hooks';
 import { FaExclamationTriangle } from 'react-icons/fa';
-import StatsCard from '../stats-card/stats';
 
 export default function Pokemon() {
   const [pokeIndex, setPokeIndex] = useState<null | number>(null);
-
   const dispatch = useAppDispatch();
-
   const gameState = useAppSelector(selectGameState);
-
   let pokemonDisplay: ReactElement | null = null;
-  //Use only for updating what is seen in text box
   const [userInput, setUserInput] = useState('');
-
   const { data, isError } = useGet151Query(pokeIndex, {
     skip: pokeIndex === null,
   });
-
   const [backgroundColor, setBackgroundColor] = useState('normalBK');
-
   const [isCorrect, setIsCorrect] = useState<null | boolean>(null);
 
-  // [] Use turn count vs the right vs wrong count to see if user has guessed on this pokemon yet
-  // [] Only increment right or wrong answers with don't know button or submit button
-  // [] Make sure to only change right and wrong count on first guess
-  // [] move if statements from function body into the return statement
-  // [] add proper styling to component
-
-  //Gets
   useEffect(() => {
     setPokeIndex(getRandomPokemon());
-  }, []);
+  }, [gameState.turnCount]);
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -66,10 +51,17 @@ export default function Pokemon() {
     }
   }
 
+  function handleNextClick() {
+    setUserInput('');
+    setBackgroundColor('normalBK');
+    setIsCorrect(null);
+    dispatch(incrementTurn());
+  }
+
   function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
     setUserInput(() => event.target.value);
   }
-  //use effect or ref
+
   function getRandomPokemon() {
     const pokemonIndex = Math.floor(Math.random() * 151 + 1);
     return pokemonIndex;
@@ -117,7 +109,7 @@ export default function Pokemon() {
     <>
       <div className={styles.componentContainer}>
         <div className={styles[backgroundColor]}>
-          {pokemonDisplay}
+          <div className={styles.imgContainer}>{pokemonDisplay}</div>
           <form
             onSubmit={handleSubmit}
             id='Search'
@@ -128,24 +120,14 @@ export default function Pokemon() {
               onChange={handleInputChange}
               type='text'
               placeholder='Enter Pokemon Name'
+              spellCheck='false'
             ></input>
             <button className={styles.submitButton}>Submit</button>
           </form>
           <div className={styles.optionsContainer}>
-            <button
-              onClick={() => {
-                setUserInput('');
-                setPokeIndex(getRandomPokemon());
-                setBackgroundColor('normalBK');
-                setIsCorrect(null);
-                dispatch(incrementTurn());
-              }}
-            >
-              next
-            </button>
+            <button onClick={handleNextClick}>next</button>
             <button onClick={handleDontKnow}>I don't know</button>
           </div>
-          <StatsCard />
         </div>
       </div>
     </>
