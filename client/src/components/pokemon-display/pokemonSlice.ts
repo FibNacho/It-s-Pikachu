@@ -29,9 +29,7 @@ export const pokemonSlice = createSlice({
     },
   },
   selectors: {
-    selectGameState: (pokemonSlice) => {
-      return pokemonSlice;
-    },
+    selectGameState: (sliceState) => sliceState,
   },
 });
 

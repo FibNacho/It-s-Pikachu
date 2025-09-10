@@ -77,7 +77,7 @@ export default function Pokemon() {
       pokemonDisplay = (
         <img
           src={data?.sprites?.front_shiny}
-          className={styles.defaultImgDisplay}
+          className={styles.defaultImgClass}
         />
       );
     }
