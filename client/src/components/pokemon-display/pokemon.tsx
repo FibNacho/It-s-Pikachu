@@ -46,7 +46,22 @@ export default function Pokemon() {
       if (userInput.toLowerCase() === data.species.name) {
         setBackgroundColor('greenBK');
         setIsCorrect(true);
+        dispatch(incrementCorrect());
+      } else if (userInput.toLowerCase() !== data.species.name) {
+        setBackgroundColor('redBK');
+        setIsCorrect(false);
+        dispatch(incrementWrong());
+        setUserInput(data?.species.name);
       }
+    }
+  }
+
+  function handleDontKnow() {
+    if (gameState.correctAnswers + gameState.wrongAnswers !== gameState.turnCount) {
+      setUserInput(data?.species.name);
+      setBackgroundColor('redBK');
+      setIsCorrect(false);
+      dispatch(incrementWrong());
     }
   }
 
@@ -78,6 +93,20 @@ export default function Pokemon() {
         <img
           src={data?.sprites?.front_shiny}
           className={styles.defaultImgClass}
+        />
+      );
+    } else if (isCorrect === false) {
+      pokemonDisplay = (
+        <img
+          src={data?.sprites?.front_shiny}
+          className={styles.defaultImgClass}
+        />
+      );
+    } else {
+      pokemonDisplay = (
+        <img
+          src={data?.sprites?.front_shiny}
+          className={styles.imgCover}
         />
       );
     }
@@ -113,17 +142,8 @@ export default function Pokemon() {
             >
               next
             </button>
-            <button
-              onClick={() => {
-                setUserInput(data?.species.name);
-              }}
-            >
-              I don't know
-            </button>
+            <button onClick={handleDontKnow}>I don't know</button>
           </div>
-          <p>{`${gameState.turnCount}`}</p>
-          <p>{`${gameState.wrongAnswers}`}</p>
-          <p>{`${gameState.correctAnswers}`}</p>
         </div>
       </div>
     </>
