@@ -1,26 +1,33 @@
 import { useGet151Query } from '../../store/api/apiSlice';
 import { useState, type ReactElement, useEffect, useRef } from 'react';
 import styles from './pokemonStyle.module.css';
-import { incrementCorrect, incrementTurn, incrementWrong } from './pokemonSlice';
-import { selectGameState } from './pokemonSlice';
+import {
+  incrementCorrect,
+  incrementTurn,
+  incrementWrong,
+  selectGameState,
+} from './pokemonSlice';
 import { useAppDispatch, useAppSelector } from '../../app/hooks/redux-hooks';
-import { FaQuestionCircle, FaExclamationTriangle } from 'react-icons/fa';
+import { FaExclamationTriangle } from 'react-icons/fa';
 
 export default function Pokemon() {
   const [pokeIndex, setPokeIndex] = useState<null | number>(null);
 
   const dispatch = useAppDispatch();
-  const { correctAnswers, wrongAnswers, turnCount } = useAppSelector(selectGameState);
 
+  const gameState = useAppSelector(selectGameState);
+
+  let pokemonDisplay: ReactElement | null = null;
   //Use only for updating what is seen in text box
   const [userInput, setUserInput] = useState('');
 
-  const { data, isError, error } = useGet151Query(pokeIndex, {
+  const { data, isError } = useGet151Query(pokeIndex, {
     skip: pokeIndex === null,
   });
 
   const [backgroundColor, setBackgroundColor] = useState('normalBK');
-  const refDisplayValue = useRef(<FaQuestionCircle />);
+
+  const [isCorrect, setIsCorrect] = useState<null | boolean>(null);
 
   // [] Use turn count vs the right vs wrong count to see if user has guessed on this pokemon yet
   // [] Only increment right or wrong answers with don't know button or submit button
@@ -28,19 +35,17 @@ export default function Pokemon() {
   // [] move if statements from function body into the return statement
   // [] add proper styling to component
 
+  //Gets
   useEffect(() => {
     setPokeIndex(getRandomPokemon());
   }, []);
 
-
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (correctAnswers + wrongAnswers !== turnCount) {
+    if (gameState.correctAnswers + gameState.wrongAnswers !== gameState.turnCount) {
       if (userInput.toLowerCase() === data.species.name) {
- 
-        );
-        dispatch(incrementTurn());
         setBackgroundColor('greenBK');
+        setIsCorrect(true);
       }
     }
   }
@@ -54,11 +59,11 @@ export default function Pokemon() {
     return pokemonIndex;
   }
 
-  if (correctAnswers + wrongAnswers !== turnCount) {
+  if (gameState.correctAnswers + gameState.wrongAnswers !== gameState.turnCount) {
     if (isError) {
-      refDisplayValue.current = <FaExclamationTriangle />;
-    } else if (data && ) {
-      refDisplayValue.current = (
+      pokemonDisplay = <FaExclamationTriangle />;
+    } else if (data) {
+      pokemonDisplay = (
         <img
           src={data?.sprites?.front_shiny}
           className={styles.imgCover}
@@ -67,17 +72,22 @@ export default function Pokemon() {
     }
   }
 
-        //  refDisplayValue.current = (
-        //   <img
-        //     src={data?.sprites?.front_shiny}
-        //     className={styles.defaultImgClass}
-        //   />
+  if (gameState.correctAnswers + gameState.wrongAnswers === gameState.turnCount) {
+    if (isCorrect === true) {
+      pokemonDisplay = (
+        <img
+          src={data?.sprites?.front_shiny}
+          className={styles.defaultImgDisplay}
+        />
+      );
+    }
+  }
 
   return (
     <>
       <div className={styles.componentContainer}>
         <div className={styles[backgroundColor]}>
-          {refDisplayValue.current}
+          {pokemonDisplay}
           <form
             onSubmit={handleSubmit}
             id='Search'
@@ -94,9 +104,11 @@ export default function Pokemon() {
           <div className={styles.optionsContainer}>
             <button
               onClick={() => {
-                setUserSearch('');
                 setUserInput('');
                 setPokeIndex(getRandomPokemon());
+                setBackgroundColor('normalBK');
+                setIsCorrect(null);
+                dispatch(incrementTurn());
               }}
             >
               next
@@ -104,12 +116,14 @@ export default function Pokemon() {
             <button
               onClick={() => {
                 setUserInput(data?.species.name);
-                setUserSearch(data?.species.name);
               }}
             >
               I don't know
             </button>
           </div>
+          <p>{`${gameState.turnCount}`}</p>
+          <p>{`${gameState.wrongAnswers}`}</p>
+          <p>{`${gameState.correctAnswers}`}</p>
         </div>
       </div>
     </>

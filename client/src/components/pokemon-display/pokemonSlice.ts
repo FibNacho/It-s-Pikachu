@@ -1,5 +1,4 @@
-import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-import { type RootState } from '../../app/store';
+import { createSlice } from '@reduxjs/toolkit';
 
 //Create a type for game state / initial state
 
@@ -20,13 +19,13 @@ export const pokemonSlice = createSlice({
   initialState,
   reducers: {
     incrementTurn: (state) => {
-      state.turnCount = state.turnCount += 1;
+      state.turnCount += 1;
     },
     incrementCorrect: (state) => {
-      state.turnCount = state.turnCount += 1;
+      state.correctAnswers += 1;
     },
     incrementWrong: (state) => {
-      state.turnCount = state.turnCount += 1;
+      state.wrongAnswers += 1;
     },
   },
   selectors: {
@@ -39,3 +38,5 @@ export const pokemonSlice = createSlice({
 export const { incrementCorrect, incrementTurn, incrementWrong } = pokemonSlice.actions;
 
 export const { selectGameState } = pokemonSlice.selectors;
+
+export default pokemonSlice.reducer;
