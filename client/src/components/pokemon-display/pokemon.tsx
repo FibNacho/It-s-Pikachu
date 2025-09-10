@@ -1,5 +1,5 @@
 import { useGet151Query } from '../../store/api/apiSlice';
-import { useState, type ReactElement, useEffect, useRef } from 'react';
+import { useState, type ReactElement, useEffect } from 'react';
 import styles from './pokemonStyle.module.css';
 import {
   incrementCorrect,
@@ -9,6 +9,7 @@ import {
 } from './pokemonSlice';
 import { useAppDispatch, useAppSelector } from '../../app/hooks/redux-hooks';
 import { FaExclamationTriangle } from 'react-icons/fa';
+import StatsCard from '../stats-card/stats';
 
 export default function Pokemon() {
   const [pokeIndex, setPokeIndex] = useState<null | number>(null);
@@ -144,6 +145,7 @@ export default function Pokemon() {
             </button>
             <button onClick={handleDontKnow}>I don't know</button>
           </div>
+          <StatsCard />
         </div>
       </div>
     </>
