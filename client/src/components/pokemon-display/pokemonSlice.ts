@@ -6,12 +6,14 @@ export interface initialGameState {
   turnCount: number;
   correctAnswers: number;
   wrongAnswers: number;
+  skippedQuestion: number;
 }
 
 const initialState: initialGameState = {
   turnCount: 1,
   correctAnswers: 0,
   wrongAnswers: 0,
+  skippedQuestion: 0,
 };
 
 export const pokemonSlice = createSlice({
@@ -27,13 +29,21 @@ export const pokemonSlice = createSlice({
     incrementWrong: (state) => {
       state.wrongAnswers += 1;
     },
+    incrementSkippedQuestion: (state) => {
+      state.skippedQuestion += 1;
+    },
   },
   selectors: {
     selectGameState: (sliceState) => sliceState,
   },
 });
 
-export const { incrementCorrect, incrementTurn, incrementWrong } = pokemonSlice.actions;
+export const {
+  incrementCorrect,
+  incrementTurn,
+  incrementWrong,
+  incrementSkippedQuestion,
+} = pokemonSlice.actions;
 
 export const { selectGameState } = pokemonSlice.selectors;
 

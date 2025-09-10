@@ -1,10 +1,11 @@
 import { useGet151Query } from '../../store/api/apiSlice';
-import { useState, type ReactElement, useEffect } from 'react';
+import { useState, type ReactElement, useEffect, useRef } from 'react';
 import styles from './pokemonStyle.module.css';
 import {
   incrementCorrect,
   incrementTurn,
   incrementWrong,
+  incrementSkippedQuestion,
   selectGameState,
 } from './pokemonSlice';
 import { useAppDispatch, useAppSelector } from '../../app/hooks/redux-hooks';
@@ -13,7 +14,8 @@ import { FaExclamationTriangle } from 'react-icons/fa';
 export default function Pokemon() {
   const [pokeIndex, setPokeIndex] = useState<null | number>(null);
   const dispatch = useAppDispatch();
-  const gameState = useAppSelector(selectGameState);
+  const { turnCount, correctAnswers, wrongAnswers, skippedQuestion } =
+    useAppSelector(selectGameState);
   let pokemonDisplay: ReactElement | null = null;
   const [userInput, setUserInput] = useState('');
   const { data, isError } = useGet151Query(pokeIndex, {
@@ -22,13 +24,15 @@ export default function Pokemon() {
   const [backgroundColor, setBackgroundColor] = useState('normalBK');
   const [isCorrect, setIsCorrect] = useState<null | boolean>(null);
 
+  const answerCount = correctAnswers + wrongAnswers + skippedQuestion;
+
   useEffect(() => {
     setPokeIndex(getRandomPokemon());
-  }, [gameState.turnCount]);
+  }, [turnCount]);
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (gameState.correctAnswers + gameState.wrongAnswers !== gameState.turnCount) {
+    if (answerCount !== turnCount) {
       if (userInput.toLowerCase() === data.species.name) {
         setBackgroundColor('greenBK');
         setIsCorrect(true);
@@ -43,7 +47,8 @@ export default function Pokemon() {
   }
 
   function handleDontKnow() {
-    if (gameState.correctAnswers + gameState.wrongAnswers !== gameState.turnCount) {
+    if (answerCount !== turnCount) {
+      dispatch(incrementSkippedQuestion());
       setUserInput(data?.species.name);
       setBackgroundColor('redBK');
       setIsCorrect(false);
@@ -67,7 +72,7 @@ export default function Pokemon() {
     return pokemonIndex;
   }
 
-  if (gameState.correctAnswers + gameState.wrongAnswers !== gameState.turnCount) {
+  if (answerCount !== turnCount) {
     if (isError) {
       pokemonDisplay = <FaExclamationTriangle />;
     } else if (data) {
@@ -80,7 +85,7 @@ export default function Pokemon() {
     }
   }
 
-  if (gameState.correctAnswers + gameState.wrongAnswers === gameState.turnCount) {
+  if (answerCount === turnCount) {
     if (isCorrect === true) {
       pokemonDisplay = (
         <img
