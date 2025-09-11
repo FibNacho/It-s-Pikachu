@@ -10,13 +10,13 @@ function StatsCard() {
       <div className={styles.cardWrapper}>
         <div>
           <span>Turns Count: </span>
-          <span>{gameState.turnCount}</span>
+          <span className={styles.turn}>{gameState.turnCount}</span>
           <br />
           <span>Correct Answers: </span>
-          <span>{gameState.correctAnswers}</span>
+          <span className={styles.correct}>{gameState.correctAnswers}</span>
           <br />
           <span>Wrong Answers: </span>
-          <span>{gameState.wrongAnswers}</span>
+          <span className={styles.wrong}>{gameState.wrongAnswers}</span>
         </div>
       </div>
     </>

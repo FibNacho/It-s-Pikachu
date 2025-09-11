@@ -16,7 +16,7 @@ export default function Pokemon() {
   const { turnCount, correctAnswers, wrongAnswers } = useAppSelector(selectGameState);
   let pokemonDisplay: ReactElement | null = null;
   const [userInput, setUserInput] = useState('');
-  const { data, isError } = useGet151Query(pokeIndex, {
+  const { data, isFetching } = useGet151Query(pokeIndex, {
     skip: pokeIndex === null,
   });
   const [backgroundColor, setBackgroundColor] = useState('normalBK');
@@ -86,13 +86,6 @@ export default function Pokemon() {
           className={styles.defaultImgClass}
         />
       );
-    } else {
-      pokemonDisplay = (
-        <img
-          src={data?.sprites?.front_shiny}
-          className={styles.imgCover}
-        />
-      );
     }
   }
 
@@ -101,7 +94,7 @@ export default function Pokemon() {
       <div className={styles.componentContainer}>
         <div className={styles[backgroundColor]}>
           <div className={styles.imgContainer}>
-            {isCorrect === null ? (
+            {isCorrect === null && !isFetching ? (
               <img
                 src={data?.sprites?.front_shiny}
                 className={styles.imgCover}

@@ -7,5 +7,18 @@
   width: 10rem;
   height: 3.5rem;
   font-size: small;
-  padding: 0 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 1rem;
+}
+
+.turn {
+  color: rgb(83, 148, 205);
+}
+
+.correct {
+  color: rgb(104, 219, 104);
+}
+
+.wrong {
+  color: rgb(231, 96, 96);
 }
