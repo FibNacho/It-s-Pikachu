@@ -8,7 +8,6 @@ import {
   selectGameState,
 } from './pokemonSlice';
 import { useAppDispatch, useAppSelector } from '../../app/hooks/redux-hooks';
-import { FaExclamationTriangle } from 'react-icons/fa';
 
 export default function Pokemon() {
   const [pokeIndex, setPokeIndex] = useState<null | number>(null);
@@ -23,6 +22,18 @@ export default function Pokemon() {
   const [isCorrect, setIsCorrect] = useState<null | boolean>(null);
 
   const answerCount = correctAnswers + wrongAnswers;
+
+  const [spriteType, setSpriteType] = useState('front_default');
+
+  const spritesButton = document.getElementById('Sprites_Button');
+  spritesButton?.addEventListener('change', (event) => {
+    const target = event.target as HTMLInputElement;
+    if (target.checked) {
+      setSpriteType('front_shiny');
+    } else {
+      setSpriteType('front_default');
+    }
+  });
 
   useEffect(() => {
     setPokeIndex(getRandomPokemon());
@@ -75,14 +86,14 @@ export default function Pokemon() {
     if (isCorrect === false) {
       pokemonDisplay = (
         <img
-          src={data?.sprites?.front_shiny}
+          src={data?.sprites?.[spriteType]}
           className={styles.defaultImgClass}
         />
       );
     } else if (isCorrect === true) {
       pokemonDisplay = (
         <img
-          src={data?.sprites?.front_shiny}
+          src={data?.sprites?.[spriteType]}
           className={styles.defaultImgClass}
         />
       );
@@ -96,7 +107,7 @@ export default function Pokemon() {
           <div className={styles.imgContainer}>
             {isCorrect === null && !isFetching ? (
               <img
-                src={data?.sprites?.front_shiny}
+                src={data?.sprites?.[spriteType]}
                 className={styles.imgCover}
               />
             ) : (
@@ -121,6 +132,12 @@ export default function Pokemon() {
             <button onClick={handleNextClick}>next</button>
             <button onClick={handleDontKnow}>I don't know</button>
           </div>
+          <input
+            id='Sprites_Button'
+            type='checkbox'
+            className={styles.shinnySwitch}
+          ></input>
+          <span>Shinny Sprites</span>
         </div>
       </div>
     </>
