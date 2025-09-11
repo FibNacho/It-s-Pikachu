@@ -1,11 +1,10 @@
 import { useGet151Query } from '../../store/api/apiSlice';
-import { useState, type ReactElement, useEffect, useRef } from 'react';
+import { useState, type ReactElement, useEffect } from 'react';
 import styles from './pokemonStyle.module.css';
 import {
   incrementCorrect,
   incrementTurn,
   incrementWrong,
-  incrementSkippedQuestion,
   selectGameState,
 } from './pokemonSlice';
 import { useAppDispatch, useAppSelector } from '../../app/hooks/redux-hooks';
@@ -14,8 +13,7 @@ import { FaExclamationTriangle } from 'react-icons/fa';
 export default function Pokemon() {
   const [pokeIndex, setPokeIndex] = useState<null | number>(null);
   const dispatch = useAppDispatch();
-  const { turnCount, correctAnswers, wrongAnswers, skippedQuestion } =
-    useAppSelector(selectGameState);
+  const { turnCount, correctAnswers, wrongAnswers } = useAppSelector(selectGameState);
   let pokemonDisplay: ReactElement | null = null;
   const [userInput, setUserInput] = useState('');
   const { data, isError } = useGet151Query(pokeIndex, {
@@ -24,7 +22,7 @@ export default function Pokemon() {
   const [backgroundColor, setBackgroundColor] = useState('normalBK');
   const [isCorrect, setIsCorrect] = useState<null | boolean>(null);
 
-  const answerCount = correctAnswers + wrongAnswers + skippedQuestion;
+  const answerCount = correctAnswers + wrongAnswers;
 
   useEffect(() => {
     setPokeIndex(getRandomPokemon());
@@ -32,7 +30,7 @@ export default function Pokemon() {
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (answerCount !== turnCount) {
+    if (isCorrect === null) {
       if (userInput.toLowerCase() === data.species.name) {
         setBackgroundColor('greenBK');
         setIsCorrect(true);
@@ -47,8 +45,7 @@ export default function Pokemon() {
   }
 
   function handleDontKnow() {
-    if (answerCount !== turnCount) {
-      dispatch(incrementSkippedQuestion());
+    if (isCorrect === null) {
       setUserInput(data?.species.name);
       setBackgroundColor('redBK');
       setIsCorrect(false);
@@ -57,10 +54,12 @@ export default function Pokemon() {
   }
 
   function handleNextClick() {
-    setUserInput('');
-    setBackgroundColor('normalBK');
-    setIsCorrect(null);
-    dispatch(incrementTurn());
+    if (answerCount === turnCount && isCorrect !== null) {
+      setUserInput('');
+      dispatch(incrementTurn());
+      setIsCorrect(null);
+      setBackgroundColor('normalBK');
+    }
   }
 
   function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -72,28 +71,15 @@ export default function Pokemon() {
     return pokemonIndex;
   }
 
-  if (answerCount !== turnCount) {
-    if (isError) {
-      pokemonDisplay = <FaExclamationTriangle />;
-    } else if (data) {
-      pokemonDisplay = (
-        <img
-          src={data?.sprites?.front_shiny}
-          className={styles.imgCover}
-        />
-      );
-    }
-  }
-
-  if (answerCount === turnCount) {
-    if (isCorrect === true) {
+  if (isCorrect !== null) {
+    if (isCorrect === false) {
       pokemonDisplay = (
         <img
           src={data?.sprites?.front_shiny}
           className={styles.defaultImgClass}
         />
       );
-    } else if (isCorrect === false) {
+    } else if (isCorrect === true) {
       pokemonDisplay = (
         <img
           src={data?.sprites?.front_shiny}
@@ -114,7 +100,16 @@ export default function Pokemon() {
     <>
       <div className={styles.componentContainer}>
         <div className={styles[backgroundColor]}>
-          <div className={styles.imgContainer}>{pokemonDisplay}</div>
+          <div className={styles.imgContainer}>
+            {isCorrect === null ? (
+              <img
+                src={data?.sprites?.front_shiny}
+                className={styles.imgCover}
+              />
+            ) : (
+              pokemonDisplay
+            )}
+          </div>
           <form
             onSubmit={handleSubmit}
             id='Search'
